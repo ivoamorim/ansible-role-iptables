@@ -1,0 +1,19 @@
+---
+iptables_strict_mode: false
+
+iptables_v4_policy:
+  input: ACCEPT
+  output: ACCEPT
+  forward: DROP
+
+iptables_allowed_client_ports:
+  - { port: 22, protocol: tcp }
+  - { port: 25, protocol: tcp }
+  - { port: 53, protocol: tcp  }
+  - { port: 80, protocol: tcp }
+  - { port: 123, protocol: tcp }
+  - { port: 443, protocol: tcp }
+  - { port: 53, protocol: udp }
+  - { port: 123, protocol: udp }
+iptables_allowed_server_ports:
+  - { port: 22, protocol: tcp }

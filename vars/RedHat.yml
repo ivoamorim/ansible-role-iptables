@@ -1,0 +1,7 @@
+iptables_packages:
+  - iptables
+  - iptables-services
+
+iptables_rule_file:
+  v4: /etc/sysconfig/iptables
+  v6: /etc/sysconfig/ip6tables

@@ -1,0 +1,6 @@
+---
+- name: save iptables_v4
+  shell: iptables-save > {{ iptables_rule_file.v4 }}
+
+- name: restore iptables_v4
+  command: "iptables-restore {{ iptables_rule_file.v4 }}"
