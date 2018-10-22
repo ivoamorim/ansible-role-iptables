@@ -14,26 +14,3 @@
     src: iptables_v4.j2
     dest: "{{ iptables_rule_file.v4 }}"
   notify: restore iptables_v4
-
-- meta: flush_handlers # Execute notify immediately
-
-- name: Allow iptables_v4 client ports
-  iptables:
-    chain: OUTPUT
-    ctstate: NEW
-    protocol: "{{ item.protocol }}"
-    destination_port: "{{ item.port }}"
-    jump: ACCEPT
-  loop: "{{ iptables_allowed_client_ports }}"
-  when: iptables_strict_mode
-  notify: save iptables_v4
-
-- name: Allow iptables_v4 server ports
-  iptables:
-    chain: INPUT
-    ctstate: NEW
-    protocol: "{{ item.protocol }}"
-    destination_port: "{{ item.port }}"
-    jump: ACCEPT
-  loop: "{{ iptables_allowed_server_ports }}"
-  notify: save iptables_v4

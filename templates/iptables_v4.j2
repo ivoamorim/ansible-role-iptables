@@ -4,15 +4,15 @@
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 :POSTROUTING ACCEPT [0:0]
+{% if iptables_security.ignore_bogus_tcp %}
 -A PREROUTING -m conntrack --ctstate INVALID -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
+-A PREROUTING -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
+{% endif %}
+{% if iptables_security.prevent_port_scan %}
 -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
 -A PREROUTING -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j DROP
 -A PREROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,PSH,ACK,URG -j DROP
-{% if iptables_strict_mode %}
--A POSTROUTING -m conntrack --ctstate INVALID -j DROP
--A POSTROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
--A POSTROUTING -p tcp -m tcp ! --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j DROP
--A POSTROUTING -p tcp -m tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG FIN,SYN,RST,PSH,ACK,URG -j DROP
 {% endif %}
 COMMIT
 
@@ -20,12 +20,28 @@ COMMIT
 :INPUT {{ iptables_v4_policy.input }} [0:0]
 :FORWARD {{ iptables_v4_policy.forward }} [0:0]
 :OUTPUT {{ iptables_v4_policy.output }} [0:0]
+{% if iptables_v4_policy.input == 'ACCEPT' %}
+{% if not iptables_security.accept_icmp_reply %}
+-A INPUT -p icmp --icmp-type echo-request -j DROP
+{% endif %}
+{% else %}
+{% if iptables_security.accept_icmp_reply %}
+-A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+{% endif %}
 -A INPUT -i lo -j ACCEPT
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+{% for item in iptables_allowed_server_ports %}
+-A INPUT -p {{ item.protocol }} --dport {{ item.port }} -m conntrack --ctstate NEW -j ACCEPT
+{% endfor %}
+{% endif %}
+{% if iptables_v4_policy.output != 'ACCEPT' %}
+{% if iptables_security.accept_icmp_reply %}
+-A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
+{% endif %}
 -A OUTPUT -o lo -j ACCEPT
-{% if iptables_strict_mode %}
 -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-{% else %}
--A OUTPUT -m conntrack --ctstate NEW,RELATED,ESTABLISHED -j ACCEPT
+{% for item in iptables_allowed_client_ports %}
+-A OUTPUT -p {{ item.protocol }} --dport {{ item.port }} -m conntrack --ctstate NEW -j ACCEPT
+{% endfor %}
 {% endif %}
 COMMIT

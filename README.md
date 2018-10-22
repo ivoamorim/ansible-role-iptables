@@ -12,7 +12,6 @@ None
 Role Variables
 --------------
 
-**iptables_strict_mode**: boolean whether you want to restrict outgoing traffic
 ```
 iptables_v4_policy:
   input: ACCEPT
@@ -21,18 +20,24 @@ iptables_v4_policy:
 ```
 A dict of default filter policy.
 ```
+iptables_security:
+  accept_icmp_reply: true
+  ignore_bogus_tcp: true
+  prevent_port_scan: false
+```
+A dict of security policy.
+```
 iptables_allowed_client_ports
   - { port: 25, protocol: tcp }
   - { port: 53, protocol: tcp  }
   - { port: 80, protocol: tcp }
 ```
-A list of TCP or UDP ports to open to outgoing traffic; if `iptables_strict_mode`
-was disabled, this list would be unavailable.
+A list of TCP or UDP ports to open to outgoing traffic; if `iptables_v*_policy.output` was `ACCEPT`, this list would be unavailable.
 ```
 iptables_allowed_server_ports:
   - { port: 22, protocol: tcp }
 ```
-A list of TCP or UDP ports to open to incoming traffic.
+A list of TCP or UDP ports to open to incoming traffic; if `iptables_v*_policy.input` was `ACCEPT`, this list would be unavailable.
 
 Dependencies
 ------------
