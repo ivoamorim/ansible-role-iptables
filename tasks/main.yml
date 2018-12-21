@@ -14,3 +14,9 @@
     src: iptables_v4.j2
     dest: "{{ iptables_rule_file.v4 }}"
   notify: restore iptables_v4
+
+- name: Setting iptables_v6 rules
+  template:
+    src: iptables_v6.j2
+    dest: "{{ iptables_rule_file.v6 }}"
+  notify: restore iptables_v6

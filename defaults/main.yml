@@ -4,6 +4,11 @@ iptables_v4_policy:
   output: ACCEPT
   forward: DROP
 
+iptables_v6_policy:
+  input: ACCEPT
+  output: ACCEPT
+  forward: DROP
+
 iptables_security:
   accept_icmp_reply: true
   ignore_bogus_tcp: true
