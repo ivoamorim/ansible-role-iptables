@@ -21,27 +21,27 @@ COMMIT
 :FORWARD {{ iptables_v4_policy.forward }} [0:0]
 :OUTPUT {{ iptables_v4_policy.output }} [0:0]
 {% if iptables_v4_policy.input == 'ACCEPT' %}
-{% if not iptables_security.accept_icmp_reply %}
+{%   if not iptables_security.accept_icmp_reply %}
 -A INPUT -p icmp --icmp-type echo-request -j DROP
-{% endif %}
+{%   endif %}
 {% else %}
-{% if iptables_security.accept_icmp_reply %}
+{%   if iptables_security.accept_icmp_reply %}
 -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
-{% endif %}
+{%   endif %}
 -A INPUT -i lo -j ACCEPT
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-{% for item in iptables_allowed_server_ports %}
+{%   for item in iptables_allowed_server_ports %}
 -A INPUT -p {{ item.protocol }} --dport {{ item.port }} -m conntrack --ctstate NEW -j ACCEPT
-{% endfor %}
+{%   endfor %}
 {% endif %}
 {% if iptables_v4_policy.output != 'ACCEPT' %}
-{% if iptables_security.accept_icmp_reply %}
+{%   if iptables_security.accept_icmp_reply %}
 -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
-{% endif %}
+{%   endif %}
 -A OUTPUT -o lo -j ACCEPT
 -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-{% for item in iptables_allowed_client_ports %}
+{%   for item in iptables_allowed_client_ports %}
 -A OUTPUT -p {{ item.protocol }} --dport {{ item.port }} -m conntrack --ctstate NEW -j ACCEPT
-{% endfor %}
+{%   endfor %}
 {% endif %}
 COMMIT
