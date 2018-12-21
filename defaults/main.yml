@@ -17,7 +17,7 @@ iptables_security:
 iptables_allowed_client_ports:
   - { port: 22, protocol: tcp }
   - { port: 25, protocol: tcp }
-  - { port: 53, protocol: tcp  }
+  - { port: 53, protocol: tcp }
   - { port: 80, protocol: tcp }
   - { port: 123, protocol: tcp }
   - { port: 443, protocol: tcp }
