@@ -3,17 +3,17 @@
   hosts: all
   vars:
     iptables_v4_policy:
-      input: ACCEPT
-      output: ACCEPT
+      input: DROP
+      output: DROP
       forward: DROP
     iptables_v6_policy:
-      input: ACCEPT
-      output: ACCEPT
+      input: DROP
+      output: DROP
       forward: DROP
     iptables_security:
       accept_icmp_reply: true
       ignore_bogus_tcp: true
-      prevent_port_scan: false
+      prevent_port_scan: true
     iptables_allowed_client_ports:
       - { port: 22, protocol: tcp }
     iptables_allowed_server_ports:
