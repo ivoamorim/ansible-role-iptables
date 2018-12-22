@@ -6,7 +6,7 @@
   shell: ip6tables-save > {{ iptables_rule_file.v6 }}
 
 - name: restore iptables_v4
-  command: "iptables-restore {{ iptables_rule_file.v4 }}"
+  command: iptables-restore {{ iptables_rule_file.v4 }}
 
 - name: restore iptables_v6
-  command: "ip6tables-restore {{ iptables_rule_file.v6 }}"
+  command: ip6tables-restore {{ iptables_rule_file.v6 }}
